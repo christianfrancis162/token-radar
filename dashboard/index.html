@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Token Radar — pre-token protocols ranked by implied value</title>
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<a class="skip" href="#board-table">Skip to the board</a>
+<div class="page">
+  <header class="masthead">
+    <div class="masthead-top">
+      <div>
+        <p class="eyebrow">Token Radar · model radar-2</p>
+        <h1>Which pre-token protocol is worth farming next?</h1>
+        <p class="standfirst">Every protocol below records no token yet. Each is ranked by an implied value
+        worked out from its own figures — TVL, seven-day growth, how long it has run with no token,
+        and how many chains it runs on. Nothing here predicts whether or when a token is issued.</p>
+      </div>
+      <dl class="masthead-stats" id="masthead-stats"></dl>
+    </div>
+    <p class="source-line" id="source-line"></p>
+  </header>
+
+  <nav class="tabs" id="tabs" aria-label="Views">
+    <button type="button" data-tab="board" aria-pressed="true">Pre-token board</button>
+    <button type="button" data-tab="live" aria-pressed="false">Already trading</button>
+    <button type="button" data-tab="model" aria-pressed="false">How the model works</button>
+  </nav>
+
+  <section id="view-board" aria-label="Pre-token board">
+    <form class="controls" id="controls">
+      <label class="field field-search">Search
+        <input type="search" id="q" placeholder="Name or slug…" autocomplete="off">
+      </label>
+      <label class="field">Category
+        <select id="category"><option value="all">All categories</option></select>
+      </label>
+      <label class="field">Chain
+        <select id="chain"><option value="all">All chains</option></select>
+      </label>
+      <label class="field">Sort by
+        <select id="sort">
+          <option value="rank">Rank (implied value)</option>
+          <option value="tvl">TVL, largest first</option>
+          <option value="growth">7-day growth, fastest first</option>
+          <option value="age">Longest with no token</option>
+          <option value="name">Name, A to Z</option>
+        </select>
+      </label>
+      <label class="check"><input type="checkbox" id="watchlist-only"> Watchlist only</label>
+      <p class="count" id="count" role="status"></p>
+    </form>
+
+    <div class="panel">
+      <div class="table-wrap">
+        <table id="board-table">
+          <thead>
+            <tr>
+              <th scope="col" class="num">#</th>
+              <th scope="col">Protocol</th>
+              <th scope="col">Category</th>
+              <th scope="col">Chains</th>
+              <th scope="col" class="num">TVL</th>
+              <th scope="col" class="num">7d</th>
+              <th scope="col" class="num">No token for</th>
+              <th scope="col" class="num">Implied value</th>
+            </tr>
+          </thead>
+          <tbody id="board-body"></tbody>
+        </table>
+      </div>
+      <p class="panel-note" id="board-note"></p>
+    </div>
+
+    <article class="detail" id="detail" hidden></article>
+  </section>
+
+  <section id="view-live" aria-label="Already trading" hidden>
+    <p class="section-lede">These protocols already have a token that trades, so the board shows the
+    market's own value for them — never a model's. They are here so the pre-token board is never
+    confused with the market: a launch candidate and a traded token are different things.</p>
+    <div class="panel">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col" class="num">#</th>
+              <th scope="col">Protocol</th>
+              <th scope="col">Category</th>
+              <th scope="col">Chains</th>
+              <th scope="col" class="num">TVL</th>
+              <th scope="col" class="num">Market cap</th>
+              <th scope="col" class="num">7d</th>
+            </tr>
+          </thead>
+          <tbody id="live-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section id="view-model" aria-label="How the model works" hidden>
+    <div class="model-grid">
+      <div>
+        <h2>How the model works</h2>
+        <p>The model is one function, <code>impliedValue</code>, in <code>lib/model.ts</code>.
+        The page recomputes the same number from the same figures in <code>impliedValueOf</code>,
+        so the number on the board and the number in the detail view are the same arithmetic.</p>
+        <p class="formula" id="formula"></p>
+        <ul class="model-points">
+          <li><b>TVL is the size of the business</b> a token would capitalise. The base is TVL × 0.22.</li>
+          <li><b>Seven-day growth is the only momentum the snapshot carries.</b> It is clamped to
+          −50%…+150%, because one week can print absurd numbers — the snapshot's own range runs past
+          +4,000% — and a single week should never decide a ranking.</li>
+          <li><b>Maturity saturates over one year.</b> A protocol that has run 365 days with no token
+          has already proved it can wait; each further year adds ever less.</li>
+          <li><b>Breadth pays for distribution.</b> Each extra chain adds 4%, up to five, for the
+          users a launch would reach.</li>
+        </ul>
+      </div>
+      <div class="model-notes">
+        <h3>Read it honestly</h3>
+        <ul>
+          <li>“Records no token” means the snapshot's record carries no token — it is not proof the
+          protocol has none.</li>
+          <li>A protocol below the watchlist's $50M floor is no worse a subject than one on it:
+          the watchlist is a floor, never the whole board.</li>
+          <li>Implied value is this entry's own claim, never a prediction of a launch price.</li>
+          <li>Farm steps are a plan, not a promise: airdrops are never guaranteed, and no step
+          here ever asks you to pay to claim.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <p>Token Radar · snapshot as of <span id="foot-date"></span> · Not financial advice. Do your own
+    research, and never share a seed phrase with anyone.</p>
+  </footer>
+</div>
+<script src="../data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
