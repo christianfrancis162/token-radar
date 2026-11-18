@@ -12,20 +12,24 @@
   <header class="masthead">
     <div class="masthead-top">
       <div>
-        <p class="eyebrow">Token Radar · model radar-2</p>
+        <p class="eyebrow">Token Radar · model radar-3 · fitted, not assumed</p>
         <h1>Which pre-token protocol is worth farming next?</h1>
         <p class="standfirst">Every protocol below records no token yet. Each is ranked by an implied value
-        worked out from its own figures — TVL, seven-day growth, how long it has run with no token,
-        and how many chains it runs on. Nothing here predicts whether or when a token is issued.</p>
+        fitted from the market itself — the 128 protocols that already trade teach the model what a
+        token is worth against a TVL, by category, chain count and age — and then a capped momentum
+        term for seven-day growth. Nothing here predicts whether or when a token is issued.</p>
       </div>
       <dl class="masthead-stats" id="masthead-stats"></dl>
     </div>
     <p class="source-line" id="source-line"></p>
   </header>
 
+  <section class="kpi-strip" id="kpi-strip" aria-label="Board totals"></section>
+
   <nav class="tabs" id="tabs" aria-label="Views">
     <button type="button" data-tab="board" aria-pressed="true">Pre-token board</button>
     <button type="button" data-tab="live" aria-pressed="false">Already trading</button>
+    <button type="button" data-tab="coverage" aria-pressed="false">All 758 protocols</button>
     <button type="button" data-tab="model" aria-pressed="false">How the model works</button>
   </nav>
 
@@ -101,23 +105,67 @@
     </div>
   </section>
 
+  <section id="view-coverage" aria-label="All protocols in the snapshot" hidden>
+    <p class="section-lede">Every one of the snapshot's 758 protocols, accounted for. Ranked rows are on
+    the board; the rest either already have a token that trades or are excluded for a stated
+    reason — a wrapped, staked or bridged product, an exchange, or a versioned pool.</p>
+    <form class="controls" id="cov-controls">
+      <label class="field field-search">Search
+        <input type="search" id="cov-q" placeholder="Name or slug…" autocomplete="off">
+      </label>
+      <label class="field">Status
+        <select id="cov-status">
+          <option value="all">All statuses</option>
+          <option value="ranked">Ranked</option>
+          <option value="has-token">Has token</option>
+          <option value="excluded">Excluded</option>
+        </select>
+      </label>
+      <p class="count" id="cov-count" role="status"></p>
+    </form>
+    <div class="panel">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Protocol</th>
+              <th scope="col">Category</th>
+              <th scope="col" class="num">TVL</th>
+              <th scope="col">Status</th>
+              <th scope="col">Reason</th>
+            </tr>
+          </thead>
+          <tbody id="cov-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
   <section id="view-model" aria-label="How the model works" hidden>
     <div class="model-grid">
       <div>
         <h2>How the model works</h2>
         <p>The model is one function, <code>impliedValue</code>, in <code>lib/model.ts</code>.
-        The page recomputes the same number from the same figures in <code>impliedValueOf</code>,
-        so the number on the board and the number in the detail view are the same arithmetic.</p>
+        It fits itself to the snapshot on every run — no multiple is assumed. The page recomputes
+        the same number from the same figures in <code>impliedValueOf</code>, so the number on the
+        board and the number in the detail view are the same arithmetic.</p>
         <p class="formula" id="formula"></p>
+        <h3 style="margin-top:24px">The fitted coefficients</h3>
+        <div id="fit-table"></div>
+        <h3 style="margin-top:24px">Out-of-sample validation</h3>
+        <div id="validation-table"></div>
         <ul class="model-points">
-          <li><b>TVL is the size of the business</b> a token would capitalise. The base is TVL × 0.22.</li>
-          <li><b>Seven-day growth is the only momentum the snapshot carries.</b> It is clamped to
-          −50%…+150%, because one week can print absurd numbers — the snapshot's own range runs past
-          +4,000% — and a single week should never decide a ranking.</li>
-          <li><b>Maturity saturates over one year.</b> A protocol that has run 365 days with no token
-          has already proved it can wait; each further year adds ever less.</li>
-          <li><b>Breadth pays for distribution.</b> Each extra chain adds 4%, up to five, for the
-          users a launch would reach.</li>
+          <li><b>TVL is the size of the business</b> a token would capitalise. The multiple is
+          fitted, not assumed: the 128 protocols that record both a TVL and a market cap are the
+          only evidence of what a token is worth against a TVL.</li>
+          <li><b>Category moves the multiple.</b> Liquid staking trades at a far lower multiple
+          than DEXs or RWA — the fit reads that off the comparables, it is not a judgement call.</li>
+          <li><b>Age and chains are small, fitted effects.</b> A longer run with no token and more
+          chains each shift the multiple by the amount the data shows, never by a round number.</li>
+          <li><b>Seven-day growth is a capped momentum term, not a regression slope.</b> The
+          comparables all come from a down week (their median change is −9.3%), so the fitted
+          growth slope is not significant and would let one noisy week crush fast growers. Growth
+          instead moves the value by at most ±15%, and a fast grower is always worth more.</li>
         </ul>
       </div>
       <div class="model-notes">
@@ -128,6 +176,9 @@
           <li>A protocol below the watchlist's $50M floor is no worse a subject than one on it:
           the watchlist is a floor, never the whole board.</li>
           <li>Implied value is this entry's own claim, never a prediction of a launch price.</li>
+          <li>The validation errors are large because crypto multiples are extremely dispersed —
+          the comparables' own mcap/TVL runs from 0.03 to 1.00. The fit sets the level and the
+          category differences; it does not price a launch to the dollar.</li>
           <li>Farm steps are a plan, not a promise: airdrops are never guaranteed, and no step
           here ever asks you to pay to claim.</li>
         </ul>

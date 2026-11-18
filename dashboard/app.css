@@ -137,6 +137,16 @@ tbody tr:last-child td { border-bottom: 0; }
 
 .foot { margin-top: var(--s6); padding-top: var(--s4); border-top: 1px solid var(--line); color: var(--faint); font-size: 13px; }
 
+.kpi-strip { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: var(--s3); margin-top: var(--s5); }
+.kpi { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: var(--s3) var(--s4); display: grid; gap: 2px; }
+.kpi-label { color: var(--muted); font-size: 12px; }
+.kpi-value { font-family: var(--font-num); font-size: 17px; color: var(--amber); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cov-status { display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+.cov-ranked { background: var(--amber); color: #1a1206; }
+.cov-has-token { background: var(--teal); color: #06231f; }
+.cov-excluded { background: var(--panel-2); color: var(--muted); border: 1px solid var(--line); }
+.cov-reason { color: var(--muted); font-size: 13px; }
+
 @media (max-width: 900px) {
   .page { padding: var(--s4); }
   h1 { font-size: 27px; }
